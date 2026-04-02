@@ -40,7 +40,7 @@ def add_task():
     task = Task(title=data['title'], done=data.get('done', False))
     db.session.add(task)
     db.session.commit()
-    redis_client.delete('tasks')  # clear cache
+    redis_client.delete('tasks')  # clear cache after change
     return jsonify({"id": task.id, "title": task.title, "done": task.done}), 201
 
 @app.route('/tasks/<int:task_id>', methods=['DELETE'])
