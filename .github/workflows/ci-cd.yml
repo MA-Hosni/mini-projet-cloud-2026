@@ -30,20 +30,9 @@ jobs:
 
       - name: 5. Lancer docker-compose + Test
         run: |
-          # Pull the fresh image we just pushed
           docker compose pull app
-          
-          # Start everything (PostgreSQL + Redis + Nginx + app)
           docker compose up -d
-          
-          # Wait a few seconds for services to be ready
           sleep 15
-          
-          # Test the TODO API (through Nginx)
           curl -f http://localhost/tasks || (echo "API test failed" && exit 1)
-          
-          # Show that everything is running
           docker compose ps
-          
-          # Stop everything cleanly
           docker compose down
