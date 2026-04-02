@@ -30,9 +30,12 @@ jobs:
 
       - name: 5. Lancer docker-compose + Test
         run: |
-          docker compose pull app
-          docker compose up -d
-          sleep 15
-          curl -f http://localhost/tasks || (echo "API test failed" && exit 1)
+          echo "🚀 Starting services..."
+          docker compose up -d --build
+          echo "⏳ Waiting for services to be ready..."
+          sleep 25
+          echo "🧪 Testing the TODO API..."
+          curl -f http://localhost/tasks || (echo "❌ API test failed" && exit 1)
+          echo "✅ SUCCESS! The pipeline is working"
           docker compose ps
           docker compose down
