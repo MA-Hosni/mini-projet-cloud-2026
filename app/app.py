@@ -24,6 +24,7 @@ with app.app_context():
 
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
+    import socket
     # Check cache first
     cached = redis_client.get('tasks')
     if cached:
@@ -31,8 +32,14 @@ def get_tasks():
     
     tasks = Task.query.all()
     result = [{"id": t.id, "title": t.title, "done": t.done} for t in tasks]
-    redis_client.set('tasks', str(result), ex=60)  # cache 60 seconds
-    return jsonify(result)
+    redis_client.set('tasks', str(result), ex=60)
+    
+    # Ajout du nom du conteneur pour voir le load balancing
+    result_with_instance = {
+        "instance": socket.gethostname(),
+        "tasks": result
+    }
+    return jsonify(result_with_instance)
 
 @app.route('/tasks', methods=['POST'])
 def add_task():
